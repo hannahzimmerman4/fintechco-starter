@@ -16,6 +16,14 @@ npm run test
 npm run build
 ```
 
+## Spending insights conventions
+The Spending insights view (`src/insights.ts`) follows these accounting rules:
+- **Net spend:** expenses minus refunds, summed in integer cents. Refunds (negative amounts) reduce their category's total and count as transactions. A category can net to zero or below; its bar is then drawn at 0%.
+- **Refund month:** a refund is attributed to the month in which it occurs (its own transaction date), not necessarily the month of the original purchase. An October purchase refunded in November reduces November's net spend.
+- **Month matching:** the literal `YYYY-MM` prefix of the transaction date; dates are never parsed, so timezones cannot move a transaction across a month boundary.
+- **Validation:** every transaction must have a real calendar date in `YYYY-MM-DD` form and an amount in whole cents. Invalid records (e.g. `2026-10-99`, `10.005`) throw a descriptive error rather than being dropped or rounded.
+- **Missing categories** are grouped as `Uncategorized`.
+
 ## Suggested Claude Code practice
 In the repo root run `claude` and ask:
 1. `Explore this repository, explain its architecture and tests. Do not edit yet.`

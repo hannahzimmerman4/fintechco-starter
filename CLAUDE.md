@@ -10,6 +10,6 @@ Code conventions:
 - Do money math in integer cents with `toCents` from `src/ledger.ts`; format with `formatUsd` / `formatDate` from `src/format.ts`.
 - Use `categoryLabel` for the Uncategorized fallback. Views are pure functions in `src/views/` that return `SafeHtml`; add a route in `src/router.ts` and a nav entry in `src/views/layout.ts` for new pages.
 
-Developer feature request (not yet implemented): Add an October 2026 **Spending insights** view to show net spending totals by category, total monthly net spend, and transaction count. Use existing transaction data; handle missing categories as Uncategorized, negative amounts as refunds, and dates near month boundaries using literal YYYY-MM-DD month matching. Add unit tests. Preserve current overview page. Do not integrate payments or change financial records.
+Feature requests are GitHub issues; read them with `gh issue view <n>`. Never edit `data/*.json` (financial records). Preserve existing pages unless the issue says otherwise.
 
-Work in this order: inspect repo, propose plan, obtain user approval, implement, run tests/build, inspect diff. Never claim a PR is protected or a deploy happened unless verified externally.
+Work in this order: inspect repo, propose plan, obtain user approval, implement on a `demo/*` or `feature/*` branch, run `npm run check`, inspect diff. Open PRs with `Closes #<n>` in the body. Never merge: `main` requires passing CI and a human review. Never claim a PR is protected or a deploy happened unless verified externally.

@@ -1,12 +1,47 @@
 import './style.css';
+import { accounts } from './accounts';
+import type { SafeHtml } from './html';
+import { parseRoute, routeHref, type Route } from './router';
 import { transactions } from './transactions';
+import { renderAccounts } from './views/accounts';
+import { renderShell } from './views/layout';
+import { renderOverview } from './views/overview';
+import { renderTransactionResults, renderTransactions, resolveFilter } from './views/transactions';
 
-const fmt = (n: number) => new Intl.NumberFormat('en-US', {style:'currency', currency:'USD'}).format(n);
 const app = document.querySelector<HTMLDivElement>('#app');
 if (!app) throw new Error('App element missing');
-app.innerHTML = `
-  <div class="shell"><aside class="nav"><div class="logo">F<span>•</span></div><div class="navitem active">Overview</div><div class="navitem">Transactions</div><div class="navitem muted">Insights · coming soon</div><div class="foot">DEMO ACCOUNT<br/>Synthetic transactions only</div></aside>
-  <main><div class="eyebrow">FINTECHCO / DIGITAL BANKING</div><header><div><h1>Account overview</h1><p>Welcome back. Here's your recent activity.</p></div><span class="pill">Sample account</span></header>
-  <section class="stat"><div><div class="eyebrow">AVAILABLE BALANCE</div><div class="balance">$12,840.32</div><p>Your balances are simulated for this demo.</p></div><div class="graphic">↗</div></section>
-  <section class="activity"><div class="heading"><h2>Recent transactions</h2><span>October 2026</span></div><div class="rows">${transactions.filter(t=>t.date.startsWith('2026-10')).map(t => `<div class="tx"><div><strong>${t.merchant}</strong><small>${t.date} · ${t.category ?? 'Uncategorized'}</small></div><b>${fmt(t.amount)}</b></div>`).join('')}</div></section>
-  </main></div>`;
+
+function renderView(route: Route): SafeHtml {
+  switch (route.name) {
+    case 'accounts':
+      return renderAccounts(accounts, transactions);
+    case 'transactions':
+      return renderTransactions(accounts, transactions, resolveFilter(route.params.get('q'), route.params.get('account'), accounts));
+    case 'overview':
+      return renderOverview(accounts, transactions);
+  }
+}
+
+/** Live filtering: re-render only the results so the search box keeps focus, and keep the URL shareable. */
+function bindTransactionFilters(root: HTMLElement): void {
+  const form = root.querySelector<HTMLFormElement>('form.filters');
+  const results = root.querySelector<HTMLElement>('#tx-results');
+  if (!form || !results) return;
+  const update = () => {
+    const data = new FormData(form);
+    const filter = resolveFilter(String(data.get('q') ?? ''), String(data.get('account') ?? ''), accounts);
+    results.innerHTML = renderTransactionResults(accounts, transactions, filter).value;
+    history.replaceState(null, '', routeHref('transactions', { q: filter.query, account: filter.accountId }));
+  };
+  form.addEventListener('input', update);
+  form.addEventListener('submit', e => { e.preventDefault(); update(); });
+}
+
+function render(): void {
+  const route = parseRoute(location.hash);
+  app!.innerHTML = renderShell(route.name, renderView(route)).value;
+  if (route.name === 'transactions') bindTransactionFilters(app!);
+}
+
+window.addEventListener('hashchange', render);
+render();

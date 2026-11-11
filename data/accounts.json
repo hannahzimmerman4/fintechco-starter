@@ -1,0 +1,5 @@
+[
+  { "id": "chk", "name": "Everyday Checking", "type": "checking", "mask": "4821", "openingBalance": 14250.00, "openingDate": "2026-08-01" },
+  { "id": "sav", "name": "High-Yield Savings", "type": "savings", "mask": "7730", "openingBalance": 18500.00, "openingDate": "2026-08-01" },
+  { "id": "cc", "name": "FinTechCo Rewards Card", "type": "credit", "mask": "1094", "openingBalance": 412.36, "openingDate": "2026-08-01" }
+]

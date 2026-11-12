@@ -14,8 +14,8 @@ import { renderTransactionResults, renderTransactions, resolveFilter } from './v
 const app = document.querySelector<HTMLDivElement>('#app');
 if (!app) throw new Error('App element missing');
 
-/** The viewer's calendar day, for Today / Yesterday headers. */
-const today = isoDay(new Date());
+/** The viewer's calendar day, for Today / Yesterday headers. `npm run demo` pins it so rehearsals look identical. */
+const today = import.meta.env.VITE_DEMO_TODAY || isoDay(new Date());
 
 function renderView(route: Route): SafeHtml {
   switch (route.name) {

@@ -1,1 +1,1 @@
-{"compilerOptions":{"target":"ES2022","lib":["ES2022","DOM"],"module":"ESNext","moduleResolution":"Bundler","strict":true,"skipLibCheck":true,"resolveJsonModule":true,"noEmit":true,"types":["vitest/globals"]},"include":["src","tests"]}
+{"compilerOptions":{"target":"ES2022","lib":["ES2022","DOM"],"module":"ESNext","moduleResolution":"Bundler","strict":true,"skipLibCheck":true,"resolveJsonModule":true,"noEmit":true,"types":["vitest/globals","vite/client"]},"include":["src","tests"]}

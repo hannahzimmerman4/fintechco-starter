@@ -22,7 +22,7 @@ npm run dev
 ```
 Open the localhost URL Vite prints. In another terminal:
 ```bash
-npm run check   # tests + type-check + production build (what CI runs)
+npm run check   # lint + tests + type-check + production build (what CI runs)
 ```
 
 ## Suggested Claude Code practice

@@ -4,6 +4,7 @@
     "allow": [
       "Bash(npm run test)",
       "Bash(npm run build)",
+      "Bash(npm run lint)",
       "Bash(npm run check)",
       "Bash(git status)",
       "Bash(git diff:*)",

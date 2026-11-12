@@ -2,6 +2,9 @@ const usd = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' 
 const shortDate = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
 const monthDay = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' });
 const shortMonth = new Intl.DateTimeFormat('en-US', { month: 'short', timeZone: 'UTC' });
+const longMonth = new Intl.DateTimeFormat('en-US', { month: 'long', timeZone: 'UTC' });
+const longMonthYear = new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+const shortMonthYear = new Intl.DateTimeFormat('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' });
 
 export const formatUsd = (n: number): string => usd.format(n);
 
@@ -12,6 +15,15 @@ export const formatDate = (iso: string): string => shortDate.format(utcDate(iso)
 
 /** 'YYYY-MM' → 'Oct'. */
 export const formatMonth = (month: string): string => shortMonth.format(utcDate(`${month}-01`));
+
+/** 'YYYY-MM' → 'October 2026'. */
+export const formatMonthLong = (month: string): string => longMonthYear.format(utcDate(`${month}-01`));
+
+/** 'YYYY-MM' → 'October'. */
+export const formatMonthName = (month: string): string => longMonth.format(utcDate(`${month}-01`));
+
+/** 'YYYY-MM' → 'Oct 2026'. */
+export const formatMonthShort = (month: string): string => shortMonthYear.format(utcDate(`${month}-01`));
 
 export const pluralize = (n: number, noun: string): string => `${n} ${noun}${n === 1 ? '' : 's'}`;
 

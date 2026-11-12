@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { categoryAverages, previousMonths, spendingInsights } from '../src/insights';
+import { availableMonths, categoryAverages, previousMonths, resolveMonth, spendingInsights } from '../src/insights';
 import { transactions } from '../src/transactions';
 import type { Transaction } from '../src/transactions';
 
@@ -109,4 +109,28 @@ describe('categoryAverages', () => {
     const avg = categoryAverages([tx('a', '2026-08-02', 'Shopping', 42.75), tx('b', '2026-09-02', 'Shopping', -42.75)], ['2026-08', '2026-09']);
     expect(avg.get('Shopping')).toBe(0);
   });
+});
+
+describe('availableMonths', () => {
+  it('lists each month that has transactions, oldest first', () => {
+    expect(availableMonths(transactions)).toEqual(['2026-08', '2026-09', '2026-10', '2026-11']);
+    expect(availableMonths([tx('2026-10-02', 1), tx('2026-08-09', 1), tx('2026-10-30', 1)])).toEqual(['2026-08', '2026-10']);
+    expect(availableMonths([])).toEqual([]);
+  });
+});
+
+describe('resolveMonth', () => {
+  const available = ['2026-08', '2026-09', '2026-10', '2026-11'];
+  it('uses the fallback, without a notice, when no month is given', () => {
+    expect(resolveMonth(null, available, '2026-10')).toEqual({ month: '2026-10' });
+    expect(resolveMonth('', available, '2026-10')).toEqual({ month: '2026-10' });
+  });
+  it('accepts an available YYYY-MM month', () => {
+    expect(resolveMonth('2026-09', available, '2026-10')).toEqual({ month: '2026-09' });
+    expect(resolveMonth('2026-11', available, '2026-10')).toEqual({ month: '2026-11' });
+  });
+  it.each(['2026-13', '2026-00', '2026-1', '2026-9', 'abc', '2026-09 ', ' 2026-09', '2026-09-01', '<script>', '2026-07'])(
+    'rejects %j and falls back to the default month',
+    value => expect(resolveMonth(value, available, '2026-10')).toEqual({ month: '2026-10', rejected: value }),
+  );
 });

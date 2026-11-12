@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { dateGroupLabel, formatMonth, isoDay } from '../src/format';
+import { dateGroupLabel, formatMonth, formatMonthLong, formatMonthName, isoDay } from '../src/format';
 
 describe('dateGroupLabel', () => {
   it('names today and yesterday', () => {
@@ -20,5 +20,13 @@ describe('isoDay and formatMonth', () => {
   it('formats a local date and a month', () => {
     expect(isoDay(new Date(2026, 0, 5))).toBe('2026-01-05');
     expect(formatMonth('2026-08')).toBe('Aug');
+  });
+});
+
+describe('formatMonthLong and formatMonthName', () => {
+  it('spells out the month, in UTC so the month cannot shift', () => {
+    expect(formatMonthLong('2026-09')).toBe('September 2026');
+    expect(formatMonthLong('2026-12')).toBe('December 2026');
+    expect(formatMonthName('2026-10')).toBe('October');
   });
 });

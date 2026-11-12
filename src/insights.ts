@@ -50,3 +50,22 @@ export function categoryAverages(txs: readonly Transaction[], months: readonly s
   }
   return new Map([...totals].map(([category, cents]) => [category, Math.round(cents / months.length)]));
 }
+
+/** Months that have at least one transaction, as 'YYYY-MM', oldest first. */
+export function availableMonths(txs: readonly Transaction[]): string[] {
+  return [...new Set(txs.map(t => t.date.slice(0, 7)))].sort();
+}
+
+export interface MonthChoice {
+  month: string;
+  /** The requested value, when it was unsupported and `month` fell back. */
+  rejected?: string;
+}
+
+const MONTH = /^\d{4}-(0[1-9]|1[0-2])$/;
+
+/** Validate an untrusted `month` param: a strict 'YYYY-MM' that has data, else the fallback (and the rejected value). */
+export function resolveMonth(param: string | null, available: readonly string[], fallback: string): MonthChoice {
+  if (!param) return { month: fallback };
+  return MONTH.test(param) && available.includes(param) ? { month: param } : { month: fallback, rejected: param };
+}

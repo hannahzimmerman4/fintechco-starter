@@ -7,3 +7,4 @@ dist/
 .DS_Store
 .claude/audit.jsonl
 .playwright-mcp/
+.claude/telemetry/

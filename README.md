@@ -41,7 +41,7 @@ gh pr close <n> --delete-branch   # close the rehearsal PR and its remote branch
 The script refuses to run with uncommitted changes and never touches remote branches. `rehearsal/insights-reference` holds an older reference implementation; never merge it.
 
 ## Guardrails
-- `.claude/settings.json` (shared with the team): tests/build run without prompts; `git push` and `gh pr create` always ask; editing `data/**`, merging PRs, force-pushing, and reading `.env*` are denied.
+- `.claude/settings.json` (shared with the team): lint/tests/build/check run without prompts; `git push` and `gh pr create` always ask; editing `data/**`, merging PRs, force-pushing, and reading `.env*` are denied.
 - CI (`.github/workflows/ci.yml`) runs `npm run check` on every pull request and on pushes to `main`.
 - Branch protection is a GitHub setting, not something this repository enforces. Check its current state (`gh api repos/<owner>/<repo>/branches/main/protection`) before saying it is on.
 - The included tests establish starter integrity; the feature tests should be created by Claude during the demo. An independent acceptance-test fixture should be prepared and held outside Claude's accessible workspace if you need to demonstrate independent verification.

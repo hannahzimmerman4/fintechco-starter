@@ -4,6 +4,7 @@ import type { SafeHtml } from './html';
 import { parseRoute, routeHref, type Route } from './router';
 import { transactions } from './transactions';
 import { renderAccounts } from './views/accounts';
+import { renderInsights } from './views/insights';
 import { renderShell } from './views/layout';
 import { renderOverview } from './views/overview';
 import { renderTransactionResults, renderTransactions, resolveFilter } from './views/transactions';
@@ -17,6 +18,8 @@ function renderView(route: Route): SafeHtml {
       return renderAccounts(accounts, transactions);
     case 'transactions':
       return renderTransactions(accounts, transactions, resolveFilter(route.params.get('q'), route.params.get('account'), accounts));
+    case 'insights':
+      return renderInsights(transactions);
     case 'overview':
       return renderOverview(accounts, transactions);
   }

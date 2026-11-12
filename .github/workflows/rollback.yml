@@ -1,0 +1,60 @@
+name: Rollback
+# Redeploy the exact build from an earlier successful Deploy run: no rebuild, no code change.
+# Find run IDs with: gh run list --workflow deploy.yml --branch main --status success
+on:
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: 'ID of a successful Deploy run on main to restore'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  actions: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  restore:
+    runs-on: ubuntu-latest
+    outputs:
+      sha: ${{ steps.validate.outputs.sha }}
+    steps:
+      - name: Validate the run to restore
+        id: validate
+        env:
+          RUN_ID: ${{ inputs.run_id }}
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          [[ "$RUN_ID" =~ ^[0-9]+$ ]] || { echo "::error::run_id must be numeric"; exit 1; }
+          read -r path branch conclusion sha < <(gh api "repos/$REPO/actions/runs/$RUN_ID" --jq '[.path, .head_branch, .conclusion, .head_sha] | @tsv')
+          if [ "$path" != ".github/workflows/deploy.yml" ] || [ "$branch" != "main" ] || [ "$conclusion" != "success" ]; then
+            echo "::error::Run $RUN_ID is not a successful Deploy on main (path=$path branch=$branch conclusion=$conclusion)"
+            exit 1
+          fi
+          echo "sha=$sha" >> "$GITHUB_OUTPUT"
+          echo "Restoring build ${sha:0:7} from Deploy run $RUN_ID" >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/download-artifact@v4
+        with:
+          name: site-${{ steps.validate.outputs.sha }}
+          path: dist
+          run-id: ${{ inputs.run_id }}
+          github-token: ${{ github.token }}
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+  deploy:
+    needs: restore
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

@@ -16,6 +16,7 @@ Goal: show, with evidence, whether the change on this branch meets its acceptanc
    - Categories: missing or blank categories go through `categoryLabel`.
    - Refunds: negative amounts reduce their category net and the total, and still count.
    - Input: route or query values are validated. Unsupported values are rejected or fall back visibly, never silently.
+   - Security: no `eval` / `new Function` / `insertAdjacentHTML` / `document.write`; no secrets; untrusted values are escaped by `html` and covered by a test with a hostile value such as `<img src=x onerror=alert(1)>`. Note that CodeQL runs on the PR as the independent check; it is not evidence until its result is observed.
    - Markup: views are pure functions that return `SafeHtml` built with `html`. No data is interpolated into raw `innerHTML`.
    - Data: `data/*.json` is unchanged and stays synthetic.
    - Scope: nothing beyond what the issue asks for. Existing pages behave as before.

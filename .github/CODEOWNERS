@@ -1,0 +1,10 @@
+# Changes to agent controls, CI/CD, hooks, financial data and money logic need an owner's review.
+# With one maintainer, approval isn't enforced in this demo repo; with a team, turn on
+# "Require review from Code Owners" in branch protection.
+/.claude/          @hannahzimmerman4
+/.github/          @hannahzimmerman4
+/scripts/          @hannahzimmerman4
+/data/             @hannahzimmerman4
+/src/ledger.ts     @hannahzimmerman4
+/src/html.ts       @hannahzimmerman4
+/CLAUDE.md         @hannahzimmerman4

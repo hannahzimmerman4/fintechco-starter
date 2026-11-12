@@ -20,17 +20,20 @@
       "Bash(gh pr merge:*)",
       "Bash(git push --force:*)",
       "Bash(git push -f:*)",
-      "Read(./.env*)"
+      "Read(./.env*)",
+      "Edit(./.claude/settings.json)",
+      "Edit(./.github/**)",
+      "Edit(./scripts/guard-hook.mjs)"
     ]
   },
   "hooks": {
-    "PostToolUse": [
+    "PreToolUse": [
       {
-        "matcher": "*",
+        "matcher": "Edit|MultiEdit|Write",
         "hooks": [
           {
             "type": "command",
-            "command": "node \"$CLAUDE_PROJECT_DIR/scripts/audit-log.mjs\""
+            "command": "node \"$CLAUDE_PROJECT_DIR/scripts/guard-hook.mjs\""
           }
         ]
       }

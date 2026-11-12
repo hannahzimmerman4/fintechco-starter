@@ -48,4 +48,16 @@ fi
 
 npm ci
 npm run check
+
+# Production should serve main's build (deploy.yml stamps the commit into the bundle).
+SITE=$(gh api 'repos/{owner}/{repo}/pages' --jq .html_url 2>/dev/null || true)
+MAIN_SHA=$(git rev-parse main)
+JS=$( [ -n "$SITE" ] && curl -fsS "$SITE" | grep -o 'assets/index-[^"]*\.js' | head -1 || true)
+if [ -n "$JS" ] && curl -fsS "$SITE$JS" | grep -q "$MAIN_SHA"; then
+  echo "Live site serves main's build (${MAIN_SHA:0:7})."
+else
+  echo "Warning: live site isn't serving main's build (${MAIN_SHA:0:7}). If you ran a rollback: gh workflow run deploy.yml" >&2
+fi
+
 echo "Reset complete: main is clean, green, and matches the starter."
+echo "Before the session: start 'npm run telemetry' in its own terminal."

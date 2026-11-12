@@ -34,7 +34,7 @@ flowchart LR
     C --> D["Readiness check<br/>CLI and team skill"]
     D --> E["Review<br/>PR, CI, human reviewer"]
     E --> F["Deploy<br/>merge triggers pipeline"]
-    F --> G["Verify and measure<br/>smoke test, audit log, cost"]
+    F --> G["Verify and measure<br/>smoke test, telemetry, cost"]
 ```
 
 **Today's feature:** customers can choose which month their Spending insights page shows. We'll look at the finished result first, then build it from the requirement up.
@@ -64,6 +64,6 @@ Claude prepares, implements and analyzes. Permissions, required checks, scoped c
 ## Recap: what we saw today
 
 - One requirement taken from issue to production in the developer's own tools.
-- Evidence at every step: tests, readiness table, CI run, deploy, smoke test, audit log, session cost.
+- Evidence at every step: tests, readiness table, CI run, deploy, smoke test, telemetry (actions, decisions, cost).
 - Controls held: push needed approval, merge was denied to Claude, and release needed a human.
 - Next step: a pilot with named repositories, owners, representative tasks and agreed thresholds.

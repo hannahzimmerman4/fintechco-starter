@@ -11,7 +11,8 @@ A small but realistic **existing codebase** for a Claude Code demo: a digital-ba
 | `src/router.ts`, `src/views/` | Hash routes and pure view functions |
 | `tests/` | Vitest unit tests |
 | `.claude/skills/feature-readiness/` | Team skill: acceptance criteria → evidence table → PR draft |
-| `scripts/audit-log.mjs` | `PostToolUse` hook that logs each Claude tool call to `.claude/audit.jsonl` (gitignored) |
+| `scripts/guard-hook.mjs` | `PreToolUse` hook that blocks unsafe code and secret-like strings at write time |
+| `scripts/otel-collector.mjs` | Local OpenTelemetry receiver (`npm run telemetry`) writing readable events and metrics to `.claude/telemetry/` (gitignored) |
 | `.github/workflows/` | `ci.yml` runs `npm run check` on PRs; `deploy.yml` deploys `main` to GitHub Pages |
 | `docs/demo/brief.md` | On-screen level-set, agenda flowchart and recap |
 
@@ -36,7 +37,7 @@ npm run check    # lint + skill lint + tests + type-check + build (what CI runs)
 | 9 | Validate: real `npm run check` output, the independent acceptance test, browser check | Terminal, browser |
 | 10 | Push and open the PR (both prompt for approval); CI runs | CLI, GitHub |
 | 11 | A human merges; `deploy.yml` deploys; Claude smoke-tests the live URL with the Playwright MCP | GitHub, browser |
-| 12 | Evidence: `tail .claude/audit.jsonl`, `/cost` | Terminal |
+| 12 | Evidence: `.claude/telemetry/events.jsonl` (commands, permission decisions, cost, cache) and `metrics.jsonl`; `/cost` | IDE, terminal |
 | 13 | Recap and next steps from `docs/demo/brief.md` | IDE |
 
 Fallback at any step: the prepared PR from `feature/month-selector-prepared` and its CI run, clearly labeled as prepared.
@@ -47,7 +48,8 @@ Fallback at any step: the prepared PR from `feature/month-selector-prepared` and
 3. Run `./scripts/demo-reset.sh`. It refuses to run with uncommitted changes or if `main` differs from the `demo-starter` tag, deletes local `demo/*` branches, and refreshes the prepared worktree. It never touches remote branches.
 
 ## Guardrails
-- **`.claude/settings.json`** (shared): lint, tests, build and check run without prompts. `git push` and `gh pr create` always ask. Editing `data/**`, merging PRs, force-pushing and reading `.env*` are denied. The audit hook is on.
+- **`.claude/settings.json`** (shared): lint, tests, build and check run without prompts. `git push` and `gh pr create` always ask. Editing `data/**`, merging PRs, force-pushing and reading `.env*` are denied. The guard hook runs before every Edit and Write.
+- **Telemetry** is configured in managed settings (`/Library/Application Support/ClaudeCode/managed-settings.json`), not the repo. Claude Code ignores OTel exporter variables in project settings. Start `npm run telemetry` before the session; the session works normally without it. Path-level denials (such as reading `.env`) aren't emitted as events.
 - **Personal `.claude/settings.local.json`** can widen these rules. Rehearse without broad allows like `gh api *`.
 - **CI** runs `npm run check` on every PR. **Deploy** runs only on pushes to `main`, which happen after a merge.
 - **Branch protection** is a GitHub setting. Check it with `gh api repos/<owner>/<repo>/branches/main/protection` before describing it.

@@ -13,6 +13,9 @@ describe('parseRoute', () => {
     expect(r.params.get('account')).toBe('cc');
     expect(r.params.get('q')).toBe('cafe olive');
   });
+  it('reads the insights route', () => {
+    expect(parseRoute('#/insights').name).toBe('insights');
+  });
   it('accepts hashes without the leading slash', () => {
     expect(parseRoute('#accounts').name).toBe('accounts');
   });

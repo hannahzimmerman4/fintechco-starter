@@ -9,7 +9,7 @@ A small but realistic **existing codebase** for the demo: a digital-banking web 
 | `src/ledger.ts` | Balances and net position, calculated in integer cents |
 | `src/transactionSearch.ts` | Search and account filtering, newest first |
 | `src/html.ts` | `html` tagged template that escapes every interpolated value |
-| `src/router.ts`, `src/views/` | Hash routes (`#/overview`, `#/accounts`, `#/transactions?account=cc&q=grocer`) and pure view functions |
+| `src/router.ts`, `src/views/` | Hash routes (`#/overview`, `#/accounts`, `#/transactions?account=cc&q=grocer`, `#/insights`) and pure view functions |
 | `tests/` | Vitest unit tests for data integrity, ledger math, search, routing, escaping, and views |
 
 ## Requirements

@@ -1,11 +1,11 @@
-export type RouteName = 'overview' | 'accounts' | 'transactions';
+export type RouteName = 'overview' | 'accounts' | 'transactions' | 'insights';
 
 export interface Route {
   name: RouteName;
   params: URLSearchParams;
 }
 
-const ROUTES: readonly RouteName[] = ['overview', 'accounts', 'transactions'];
+const ROUTES: readonly RouteName[] = ['overview', 'accounts', 'transactions', 'insights'];
 
 /** '#/transactions?account=cc' → { name: 'transactions', params }. Unknown or empty hashes go to overview. */
 export function parseRoute(hash: string): Route {

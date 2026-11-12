@@ -1,47 +1,54 @@
-# FinTechCo — Claude Code Interview Starter
+# FinTechCo — Claude Code Demo Starter
 
-A small but realistic **existing codebase** for the demo: a digital-banking web app with an account overview, accounts list, and searchable transactions. It contains **only synthetic data**. Claude's live task is to add the Spending insights feature described in the GitHub issue "Spending insights: October 2026" (the "Insights · coming soon" nav item).
+A small but realistic **existing codebase** for a Claude Code demo: a digital-banking web app with an overview, accounts, searchable transactions and October 2026 Spending insights. It uses **synthetic data only**. The live task is the GitHub issue "Insights: choose a month", taken from requirement to production.
 
 ## What's here
 | Path | Purpose |
 |---|---|
-| `data/accounts.json`, `data/transactions.json` | Synthetic accounts (checking, savings, credit card) and ~40 transactions, Aug–Nov 2026, including a missing category, refunds, and Oct 31 / Nov 1 boundary dates |
-| `src/ledger.ts` | Balances and net position, calculated in integer cents |
-| `src/transactionSearch.ts` | Search and account filtering, newest first |
+| `data/*.json` | Synthetic accounts and ~40 transactions, Aug–Nov 2026, including a missing category, refunds and the Oct 31 / Nov 1 boundary |
+| `src/ledger.ts`, `src/insights.ts` | Balances and monthly category net spend, in integer cents |
 | `src/html.ts` | `html` tagged template that escapes every interpolated value |
-| `src/router.ts`, `src/views/` | Hash routes (`#/overview`, `#/accounts`, `#/transactions?account=cc&q=grocer`, `#/insights`) and pure view functions |
-| `tests/` | Vitest unit tests for data integrity, ledger math, search, routing, escaping, and views |
-
-## Requirements
-Node.js 22 (see .nvmrc), Git, VS Code, Claude Code CLI.
+| `src/router.ts`, `src/views/` | Hash routes and pure view functions |
+| `tests/` | Vitest unit tests |
+| `.claude/skills/feature-readiness/` | Team skill: acceptance criteria → evidence table → PR draft |
+| `scripts/audit-log.mjs` | `PostToolUse` hook that logs each Claude tool call to `.claude/audit.jsonl` (gitignored) |
+| `.github/workflows/` | `ci.yml` runs `npm run check` on PRs; `deploy.yml` deploys `main` to GitHub Pages |
+| `docs/demo/brief.md` | On-screen level-set, agenda flowchart and recap |
 
 ## Run
 ```bash
 npm install
-npm run dev
-```
-Open the localhost URL Vite prints. In another terminal:
-```bash
-npm run check   # lint + tests + type-check + production build (what CI runs)
+npm run dev      # or `npm run demo` to pin "today" to 2026-11-11
+npm run check    # lint + skill lint + tests + type-check + build (what CI runs)
 ```
 
-## Suggested Claude Code practice
-In the repo root run `claude` and ask:
-1. `Explore this repository, explain its architecture and tests. Do not edit yet.`
-2. (Plan mode) `Read the Spending insights issue with gh and plan it. Include tests, edge cases, and files to change. Do not edit until I approve.`
-3. `Implement the approved plan on branch demo/spending-insights and run npm run check. Explain each action and show the diff.`
-4. `/fintech-test-review` (project Skill; invoke after implementation).
-5. `Commit, push, and open a PR that closes the issue.`
+## Demo runbook
+| # | Step | Surface |
+|---|---|---|
+| 1 | Level-set from `docs/demo/brief.md` | VS Code Markdown preview |
+| 2 | End state first: the finished feature from the `../fintechco-completed` worktree on port 5174 | Browser |
+| 3 | Workspace: branch, `CLAUDE.md` (conventions) vs `.claude/settings.json` (enforced), `/model` | IDE |
+| 4 | Explore in plan mode: trace how Insights gets its month. No edits | IDE |
+| 5 | Clarify and plan from `gh issue view <n>`; approve a scoped plan | IDE |
+| 6 | Implement on `demo/month-selector` with tests; walk through the diff | IDE |
+| 7 | CLI handoff: pause the IDE agent, `pwd`, `git status --short`, `claude` | Integrated terminal |
+| 8 | `/feature-readiness`, then `/code-review` | CLI |
+| 9 | Validate: real `npm run check` output, the independent acceptance test, browser check | Terminal, browser |
+| 10 | Push and open the PR (both prompt for approval); CI runs | CLI, GitHub |
+| 11 | A human merges; `deploy.yml` deploys; Claude smoke-tests the live URL with the Playwright MCP | GitHub, browser |
+| 12 | Evidence: `tail .claude/audit.jsonl`, `/cost` | Terminal |
+| 13 | Recap and next steps from `docs/demo/brief.md` | IDE |
+
+Fallback at any step: the prepared PR from `feature/month-selector-prepared` and its CI run, clearly labeled as prepared.
 
 ## Reset between rehearsals
-```bash
-gh pr close <n> --delete-branch   # close the rehearsal PR and its remote branch
-./scripts/demo-reset.sh           # back to a clean, green main
-```
-The script refuses to run with uncommitted changes and never touches remote branches. `rehearsal/insights-reference` holds an older reference implementation; never merge it.
+1. If the rehearsal PR was merged, revert it on GitHub and merge the revert. That redeploys the previous build and is also the rollback demonstration.
+2. Close any unmerged rehearsal PR: `gh pr close <n> --delete-branch`.
+3. Run `./scripts/demo-reset.sh`. It refuses to run with uncommitted changes or if `main` differs from the `demo-starter` tag, deletes local `demo/*` branches, and refreshes the prepared worktree. It never touches remote branches.
 
 ## Guardrails
-- `.claude/settings.json` (shared with the team): lint/tests/build/check run without prompts; `git push` and `gh pr create` always ask; editing `data/**`, merging PRs, force-pushing, and reading `.env*` are denied.
-- CI (`.github/workflows/ci.yml`) runs `npm run check` on every pull request and on pushes to `main`.
-- Branch protection is a GitHub setting, not something this repository enforces. Check its current state (`gh api repos/<owner>/<repo>/branches/main/protection`) before saying it is on.
-- The included tests establish starter integrity; the feature tests should be created by Claude during the demo. An independent acceptance-test fixture should be prepared and held outside Claude's accessible workspace if you need to demonstrate independent verification.
+- **`.claude/settings.json`** (shared): lint, tests, build and check run without prompts. `git push` and `gh pr create` always ask. Editing `data/**`, merging PRs, force-pushing and reading `.env*` are denied. The audit hook is on.
+- **Personal `.claude/settings.local.json`** can widen these rules. Rehearse without broad allows like `gh api *`.
+- **CI** runs `npm run check` on every PR. **Deploy** runs only on pushes to `main`, which happen after a merge.
+- **Branch protection** is a GitHub setting. Check it with `gh api repos/<owner>/<repo>/branches/main/protection` before describing it.
+- **Acceptance test:** keep the independent test outside this workspace, and copy it in only at the validation step.

@@ -8,6 +8,7 @@
   },
   "scripts": {
     "dev": "vite --host 127.0.0.1",
+    "demo": "VITE_DEMO_TODAY=2026-11-11 vite --host 127.0.0.1",
     "build": "tsc --noEmit && vite build",
     "test": "vitest run",
     "lint": "eslint .",

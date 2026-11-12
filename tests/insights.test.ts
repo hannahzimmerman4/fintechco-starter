@@ -1,0 +1,85 @@
+import { describe, expect, it } from 'vitest';
+import { spendingInsights } from '../src/insights';
+import { transactions } from '../src/transactions';
+import type { Transaction } from '../src/transactions';
+
+let n = 0;
+const tx = (date: string, amount: number, category?: string): Transaction => ({
+  id: `t${++n}`,
+  accountId: 'chk',
+  date,
+  merchant: 'M',
+  amount,
+  ...(category === undefined ? {} : { category }),
+});
+
+describe('spendingInsights', () => {
+  it('includes Oct 1 and Oct 31 and excludes Sep 30 and Nov 1', () => {
+    const r = spendingInsights(
+      [tx('2026-09-30', 10, 'A'), tx('2026-10-01', 10, 'A'), tx('2026-10-31', 10, 'A'), tx('2026-11-01', 10, 'A')],
+      '2026-10',
+    );
+    expect(r.count).toBe(2);
+    expect(r.totalCents).toBe(2000);
+  });
+
+  it('matches the whole month, not a shorter prefix', () => {
+    const fixtures = [tx('2026-09-30', 10, 'A'), tx('2026-10-01', 10, 'A'), tx('2026-10-31', 10, 'A'), tx('2026-11-01', 10, 'A')];
+    expect(spendingInsights(fixtures, '2026-1').count).toBe(0);
+  });
+
+  it('subtracts refunds from the category and the total but counts them', () => {
+    const r = spendingInsights([tx('2026-10-02', 28.9, 'Dining'), tx('2026-10-03', -5, 'Dining')], '2026-10');
+    expect(r.categories).toContainEqual({ category: 'Dining', netCents: 2390 });
+    expect(r.totalCents).toBe(2390);
+    expect(r.count).toBe(2);
+  });
+
+  it('keeps categories whose refunds cancel or exceed spending', () => {
+    const r = spendingInsights(
+      [tx('2026-10-02', 50, 'Travel'), tx('2026-10-03', -50, 'Travel'), tx('2026-10-04', -12, 'Books')],
+      '2026-10',
+    );
+    expect(r.categories).toContainEqual({ category: 'Travel', netCents: 0 });
+    expect(r.categories).toContainEqual({ category: 'Books', netCents: -1200 });
+    expect(r.categories).toHaveLength(2);
+  });
+
+  it('groups missing and blank categories as Uncategorized', () => {
+    const r = spendingInsights([tx('2026-10-02', 1), tx('2026-10-03', 2, ''), tx('2026-10-04', 3, '  ')], '2026-10');
+    expect(r.categories).toEqual([{ category: 'Uncategorized', netCents: 600 }]);
+  });
+
+  it('sorts by net descending and breaks ties by category name', () => {
+    const r = spendingInsights(
+      [tx('2026-10-02', 49, 'Transport'), tx('2026-10-03', 49, 'Health'), tx('2026-10-04', 1850, 'Housing')],
+      '2026-10',
+    );
+    expect(r.categories.map((c) => c.category)).toEqual(['Housing', 'Health', 'Transport']);
+  });
+
+  it('does not mutate its input', () => {
+    const input = [tx('2026-10-02', 5, 'A'), tx('2026-10-03', -1)];
+    const copy = structuredClone(input);
+    input.forEach((t) => Object.freeze(t));
+    Object.freeze(input);
+    expect(() => spendingInsights(input, '2026-10')).not.toThrow();
+    expect(input).toEqual(copy);
+  });
+
+  it('summarizes the October 2026 data', () => {
+    const r = spendingInsights(transactions, '2026-10');
+    expect(r.count).toBe(13);
+    expect(r.totalCents).toBe(233948);
+    expect(r.categories).toEqual([
+      { category: 'Housing', netCents: 185000 },
+      { category: 'Groceries', netCents: 17259 },
+      { category: 'Utilities', netCents: 16280 },
+      { category: 'Health', netCents: 4900 },
+      { category: 'Transport', netCents: 4900 },
+      { category: 'Dining', netCents: 2390 },
+      { category: 'Uncategorized', netCents: 1620 },
+      { category: 'Subscriptions', netCents: 1599 },
+    ]);
+  });
+});

@@ -89,3 +89,4 @@ span.navitem{display:block}a.navitem{display:block;color:inherit;text-decoration
   *,*::before,*::after{transition-duration:0s!important;animation-duration:0s!important}
   .tx-row:active,.cat-card:active,.icon-button:active{transform:none}
 }
+.build{opacity:.7;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px}

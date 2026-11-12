@@ -8,13 +8,13 @@ const NAV: readonly { name: RouteName; label: string }[] = [
   { name: 'insights', label: 'Insights' },
 ];
 
-/** App frame: navigation (sidebar on desktop, top bar on mobile) around the active view. */
-export function renderShell(active: RouteName, content: SafeHtml): SafeHtml {
+/** App frame: navigation (sidebar on desktop, top bar on mobile) around the active view. `build` is the deployed commit SHA. */
+export function renderShell(active: RouteName, content: SafeHtml, build = 'local'): SafeHtml {
   const links = NAV.map(n =>
     n.name === active
       ? html`<a class="navitem active" href="${routeHref(n.name)}" aria-current="page">${n.label}</a>`
       : html`<a class="navitem" href="${routeHref(n.name)}">${n.label}</a>`,
   );
-  return html`<div class="shell"><nav class="nav" aria-label="Main"><div class="logo">F<span>•</span></div>${links}<div class="foot">DEMO ACCOUNT<br/>Synthetic transactions only</div></nav>
+  return html`<div class="shell"><nav class="nav" aria-label="Main"><div class="logo">F<span>•</span></div>${links}<div class="foot">DEMO ACCOUNT<br/>Synthetic transactions only<br/><span class="build">Build ${build.slice(0, 7)}</span></div></nav>
   <main>${content}</main></div><dialog class="drawer" id="tx-drawer" aria-labelledby="drawer-title"></dialog>`;
 }

@@ -14,6 +14,11 @@ const evil: Transaction = { id: 'x1', accountId: 'cc', date: '2026-11-10', merch
 const evilAccount: Account = { ...accounts[2], name: '"><img src=x onerror=alert(1)>' };
 
 describe('renderShell', () => {
+  it('shows the build it was deployed from, or "local"', () => {
+    expect(renderShell('overview', html``, '043ce85a9b').value).toContain('<span class="build">Build 043ce85</span>');
+    expect(renderShell('overview', html``).value).toContain('<span class="build">Build local</span>');
+    expect(renderShell('overview', html``, '<b>x</b>').value).not.toContain('<b>');
+  });
   it('marks only the active route and links Insights', () => {
     const out = renderShell('accounts', html`<p>body</p>`).value;
     expect(out).toContain('<a class="navitem active" href="#/accounts" aria-current="page">Accounts</a>');

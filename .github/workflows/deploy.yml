@@ -1,6 +1,7 @@
 name: Deploy
 # Production release: runs only after a human merges a reviewed PR into main.
-# Rollback = revert the PR; the revert's merge redeploys the previous build.
+# Fast rollback: run the Rollback workflow with a previous Deploy run ID (redeploys its exact build).
+# Fix forward: revert the PR; merging the revert deploys again.
 on:
   push:
     branches: [main]
@@ -30,9 +31,16 @@ jobs:
         run: npx vite build --base=./
         env:
           VITE_DEMO_TODAY: '2026-11-11'
+          VITE_BUILD_SHA: ${{ github.sha }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
+      # Keep each release's exact build for 90 days so Rollback can redeploy it without rebuilding.
+      - uses: actions/upload-artifact@v4
+        with:
+          name: site-${{ github.sha }}
+          path: dist
+          retention-days: 90
   deploy:
     needs: build
     runs-on: ubuntu-latest

@@ -11,7 +11,8 @@
     "build": "tsc --noEmit && vite build",
     "test": "vitest run",
     "lint": "eslint .",
-    "check": "npm run lint && npm run test && npm run build"
+    "lint:skills": "node scripts/lint-skills.mjs",
+    "check": "npm run lint && npm run lint:skills && npm run test && npm run build"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

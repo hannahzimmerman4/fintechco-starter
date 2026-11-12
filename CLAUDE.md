@@ -12,4 +12,9 @@ Code conventions:
 
 Feature requests are GitHub issues; read them with `gh issue view <n>`. Never edit `data/*.json` (financial records). Preserve existing pages unless the issue says otherwise.
 
+Skills:
+- Repo-specific skills live in `.claude/skills/<name>/SKILL.md` and are committed; don't duplicate them in `~/.claude/skills/`.
+- Every skill description must say when to use it ("Use when/before ..."); `npm run lint:skills` enforces this.
+- Skill changes go through a PR like code.
+
 Work in this order: inspect repo, propose plan, obtain user approval, implement on a `demo/*` or `feature/*` branch, run `npm run check`, inspect diff. Open PRs with `Closes #<n>` in the body. Never merge: `main` requires passing CI and a human review. Never claim a PR is protected or a deploy happened unless verified externally.

@@ -20,7 +20,10 @@
       "Bash(gh pr merge:*)",
       "Bash(git push --force:*)",
       "Bash(git push -f:*)",
-      "Read(./.env*)"
+      "Read(./.env*)",
+      "Edit(./.claude/settings.json)",
+      "Edit(./.github/**)",
+      "Edit(./scripts/guard-hook.mjs)"
     ]
   },
   "hooks": {

@@ -48,11 +48,11 @@ flowchart TD
         C -->|missing evidence| B
     end
     subgraph GATE["Repository and CI: controls decide"]
-        E[Required checks] --> G{Human approves and merges?}
+        E["Required checks<br/>tests + CodeQL"] --> G{Human approves and merges?}
     end
     subgraph REL["Release: existing pipeline"]
         H[Deploy] --> I[Smoke test]
-        I -->|problem| R[Revert PR = rollback]
+        I -->|problem| R["Rollback<br/>redeploy previous build"]
     end
     D --> E
     G -->|changes needed| B
@@ -60,6 +60,14 @@ flowchart TD
 ```
 
 Claude prepares, implements and analyzes. Permissions, required checks, scoped credentials and people decide what ships.
+
+## Secure code in three layers
+
+| Layer | What | Why |
+|---|---|---|
+| Built into how Claude writes | CLAUDE.md security rules, the readiness skill's checklist, and a write-time guard hook | Correct the first time: no tokens spent fixing what shouldn't have been written |
+| Governance Claude can't override | Required CodeQL and test checks, secret scanning with push protection, deny rules, CODEOWNERS | The platform decides what merges, not the agent |
+| Independent analysis | CodeQL: a deterministic engine, separate from the model that wrote the code | A second reference point that doesn't share Claude's blind spots |
 
 ## Recap: what we saw today
 

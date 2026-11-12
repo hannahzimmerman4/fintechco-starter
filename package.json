@@ -8,10 +8,12 @@
   },
   "scripts": {
     "dev": "vite --host 127.0.0.1",
+    "demo": "VITE_DEMO_TODAY=2026-11-11 vite --host 127.0.0.1",
     "build": "tsc --noEmit && vite build",
     "test": "vitest run",
     "lint": "eslint .",
-    "check": "npm run lint && npm run test && npm run build"
+    "lint:skills": "node scripts/lint-skills.mjs",
+    "check": "npm run lint && npm run lint:skills && npm run test && npm run build"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

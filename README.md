@@ -13,7 +13,7 @@ A small but realistic **existing codebase** for the demo: a digital-banking web 
 | `tests/` | Vitest unit tests for data integrity, ledger math, search, routing, escaping, and views |
 
 ## Requirements
-Node.js 20+ (22 recommended), Git, VS Code, Claude Code CLI.
+Node.js 22 (see .nvmrc), Git, VS Code, Claude Code CLI.
 
 ## Run
 ```bash

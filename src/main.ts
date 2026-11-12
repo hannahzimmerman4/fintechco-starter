@@ -52,6 +52,10 @@ function render(): void {
   syncPrivacy(app!);
   if (route.name === 'transactions') bindTransactionFilters(app!);
   if (route.name === 'insights') bindCategoryFilter(app!);
+  // PREPARED UNSAFE EXAMPLE (do not merge): echoes the URL's month param as raw HTML.
+  const requested = new URLSearchParams(location.hash.split('?')[1] ?? '').get('month');
+  const notice = app!.querySelector<HTMLElement>('main');
+  if (route.name === 'insights' && requested && notice) notice.innerHTML = `<p class="notice">${requested} isn't available.</p>` + notice.innerHTML;
 }
 
 bindPrivacy(app);

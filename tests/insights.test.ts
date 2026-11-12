@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { spendingInsights } from '../src/insights';
+import { categoryAverages, previousMonths, spendingInsights } from '../src/insights';
 import { transactions } from '../src/transactions';
 import type { Transaction } from '../src/transactions';
 
@@ -81,5 +81,32 @@ describe('spendingInsights', () => {
       { category: 'Uncategorized', netCents: 1620 },
       { category: 'Subscriptions', netCents: 1599 },
     ]);
+  });
+});
+
+describe('previousMonths', () => {
+  it('lists earlier months oldest first, across a year boundary', () => {
+    expect(previousMonths('2026-10', 2)).toEqual(['2026-08', '2026-09']);
+    expect(previousMonths('2026-01', 2)).toEqual(['2025-11', '2025-12']);
+  });
+});
+
+describe('categoryAverages', () => {
+  const tx = (id: string, date: string, category: string | undefined, amount: number) => ({ id, accountId: 'cc', date, merchant: 'M', category, amount });
+  it('averages net cents per month, counting empty months as zero', () => {
+    const avg = categoryAverages([
+      tx('a', '2026-08-02', 'Dining', 10.01),
+      tx('b', '2026-09-02', 'Groceries', 20),
+      tx('c', '2026-08-03', 'Groceries', 10),
+      tx('d', '2026-10-01', 'Groceries', 999),
+      tx('e', '2026-09-04', undefined, 3),
+    ], ['2026-08', '2026-09']);
+    expect(avg.get('Groceries')).toBe(1500);
+    expect(avg.get('Dining')).toBe(501); // 1001 / 2 rounded
+    expect(avg.get('Uncategorized')).toBe(150);
+  });
+  it('lets refunds cancel spend', () => {
+    const avg = categoryAverages([tx('a', '2026-08-02', 'Shopping', 42.75), tx('b', '2026-09-02', 'Shopping', -42.75)], ['2026-08', '2026-09']);
+    expect(avg.get('Shopping')).toBe(0);
   });
 });

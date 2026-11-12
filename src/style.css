@@ -1,2 +1,91 @@
 :root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#142b37;background:#f5f8fa}*{box-sizing:border-box}body{margin:0}.shell{min-height:100vh;display:grid;grid-template-columns:235px 1fr}.nav{background:#102c38;color:#d4e5e9;padding:35px 22px;position:relative}.logo{font-weight:800;font-size:34px;margin-bottom:55px}.logo span{color:#55d7ba}.navitem{padding:13px 17px;margin:7px 0;border-radius:10px}.navitem.active{background:#214856;color:white}.muted{opacity:.6}.foot{position:absolute;bottom:30px;font-size:11px;line-height:1.8;opacity:.65}main{padding:45px 55px;max-width:1200px;width:100%}.eyebrow{letter-spacing:.16em;font-size:11px;color:#62808d;font-weight:700}header{display:flex;align-items:center;justify-content:space-between;margin:18px 0 30px}h1{font-size:34px;margin:0 0 10px}p{color:#647985;margin:0;font-size:14px}.pill{border:1px solid #d8e4e7;border-radius:30px;padding:10px 14px;font-size:12px}.stat{background:#fff;border-radius:18px;padding:35px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 5px 25px #1936440a}.balance{font-size:38px;font-weight:750;margin:14px 0}.graphic{font-size:70px;color:#36ad92}.activity{background:white;border-radius:18px;margin-top:25px;padding:25px 35px;box-shadow:0 5px 25px #1936440a}.heading{display:flex;align-items:center;justify-content:space-between}.heading h2{font-size:20px}.heading span{font-size:13px;color:#78909c}.tx{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:17px 0;border-top:1px solid #edf2f3}.tx:first-child{border-top:0}.tx strong{display:block;font-size:14px}.tx small{display:block;color:#8396a0;margin-top:5px}.tx b{font-size:14px}@media(max-width:750px){.shell{grid-template-columns:minmax(0,1fr);align-content:start}.nav{min-width:0;display:flex;align-items:center;gap:4px;padding:10px 16px;overflow-x:auto;position:sticky;top:0;z-index:1}.logo{font-size:24px;margin:0 10px 0 0}.navitem{margin:0;padding:9px 12px;white-space:nowrap}.foot{display:none}main{padding:24px}header{align-items:flex-start;gap:10px}.pill{white-space:nowrap}}
 span.navitem{display:block}a.navitem{display:block;color:inherit;text-decoration:none}a.navitem:not(.active):hover{background:#18394a}a.navitem:focus-visible,.account-card:focus-visible{outline:2px solid #55d7ba;outline-offset:2px}.heading a,.account-row-side a{font-size:13px;color:#1f7f69;font-weight:600;text-decoration:none}.heading a:hover,.account-row-side a:hover{text-decoration:underline}.account-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin-top:25px}.account-card{display:block;background:#fff;border-radius:18px;padding:22px 25px;box-shadow:0 5px 25px #1936440a;color:inherit;text-decoration:none;border:1px solid transparent}.account-card:hover{border-color:#cfe1e5}.account-card strong{display:block;margin-top:10px;font-size:15px}.account-card .amount{font-size:26px;font-weight:750;margin:12px 0 4px;font-variant-numeric:tabular-nums}.account-card small{color:#8396a0;font-size:12px}.tx b{font-variant-numeric:tabular-nums;white-space:nowrap}.tx b.credit{color:#1f7f69}.account-row-side{display:flex;flex-direction:column;align-items:flex-end;gap:4px}.account-row-side small{color:#8396a0;font-size:12px}.filters{display:flex;flex-wrap:wrap;gap:14px;padding:10px 0 18px}.filters label{display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;color:#62808d;letter-spacing:.04em}.filters input,.filters select{font:inherit;font-size:14px;color:#142b37;padding:10px 12px;border:1px solid #d8e4e7;border-radius:10px;background:#fff;min-width:220px}.filters input:focus-visible,.filters select:focus-visible{outline:2px solid #55d7ba;outline-offset:1px}.result-count{font-size:12px;padding-bottom:4px}.empty{padding:17px 0}@media(max-width:750px){.filters input,.filters select{min-width:0;width:100%}.filters label{flex:1 1 100%}.account-row{flex-wrap:wrap;gap:10px}.account-row-side{align-items:flex-start}}
+
+/* ---- UI polish: numbers, elevation, transaction list, insights, privacy ---- */
+:root{--hairline:rgba(0,0,0,.06);--credit-bg:rgba(16,185,129,.12);--credit-fg:#047857;--ease:cubic-bezier(.2,.7,.2,1);--sticky-top:0px}
+.money,time,.pct,.pill,.result-count,.tx small{font-variant-numeric:tabular-nums}
+.money{display:inline-block;transition:filter .3s var(--ease)}
+#app.private .money{filter:blur(8px)}
+.money.credit{color:var(--credit-fg);background:var(--credit-bg);border-radius:999px;padding:2px 9px}
+
+/* Hero balance */
+.balance-row{display:flex;align-items:center;gap:12px}
+.balance .money.hero{font-size:52px;font-weight:850;letter-spacing:-.04em;line-height:1}
+.money.hero .cents{font-size:.65em;opacity:.6;letter-spacing:-.02em}
+.icon-button{display:inline-grid;place-items:center;width:38px;height:38px;border:0;border-radius:12px;background:transparent;color:#62808d;cursor:pointer;font:inherit;box-shadow:inset 0 0 0 1px var(--hairline);transition:background .15s,transform .12s var(--ease)}
+.icon-button:hover{background:#eef4f5}
+.icon-button:focus-visible,.tx-row:focus-visible,.cat-card:focus-visible,.link-button:focus-visible{outline:2px solid #55d7ba;outline-offset:2px}
+.privacy-toggle .eye-closed,.privacy-toggle[aria-pressed="true"] .eye-open{display:none}
+.privacy-toggle[aria-pressed="true"] .eye-closed{display:block}
+
+/* Elevation: 1px inner borders instead of drop shadows */
+.stat,.activity,.account-card{box-shadow:inset 0 0 0 1px var(--hairline)}
+.account-card:hover{border-color:transparent;box-shadow:inset 0 0 0 1px rgba(0,0,0,.12)}
+
+/* Transaction list */
+.tx-group .rows{display:block}
+.date-header{position:sticky;top:var(--sticky-top);z-index:1;margin:0 -35px;padding:9px 35px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#62808d;background:rgba(255,255,255,.72);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+.tx-row{display:grid;grid-template-columns:40px minmax(0,1fr) auto;align-items:center;gap:14px;width:100%;padding:12px 0;border:0;border-top:1px solid #edf2f3;background:none;font:inherit;color:inherit;text-align:left;cursor:pointer;border-radius:12px;transition:transform .12s var(--ease),background .15s}
+.rows .tx-item:first-child .tx-row{border-top:0}
+.tx-row:hover{background:#f7fafb}
+.tx-row:active,.cat-card:active,.icon-button:active{transform:scale(.98)}
+.tx-icon{display:grid;place-items:center;width:40px;height:40px;border-radius:12px;font-weight:750;color:var(--c);background:color-mix(in srgb,var(--c) 10%,transparent)}
+.tx-main{min-width:0}
+.tx-main strong{display:block;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tx-main small{display:block;color:#8396a0;margin-top:4px;font-size:12px}
+.tx-row>.money{justify-self:end;font-weight:650;font-size:14px;white-space:nowrap}
+
+/* Collapsible rows/groups for smooth filtering */
+.collapsible{display:grid;grid-template-rows:1fr;transition:grid-template-rows .32s var(--ease),opacity .25s}
+.collapsible-inner{min-height:0;overflow:clip}
+.collapsible.is-hidden{grid-template-rows:0fr;opacity:0}
+
+/* Insights: spend bar and category cards */
+.spend-bar{display:flex;gap:2px;height:14px;margin:18px 0 22px}
+.seg{min-width:4px;border-radius:999px;background:var(--c);transition:opacity .25s,transform .25s var(--ease)}
+.filtered .seg{opacity:.25}
+.filtered .seg.active{opacity:1;transform:scaleY(1.35)}
+.cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.cat-card{display:flex;flex-direction:column;gap:8px;padding:16px;border:0;border-radius:14px;background:#fff;font:inherit;color:inherit;text-align:left;cursor:pointer;box-shadow:inset 0 0 0 1px var(--hairline);transition:transform .12s var(--ease),box-shadow .2s,opacity .25s}
+.cat-card:hover{box-shadow:inset 0 0 0 1px rgba(0,0,0,.12)}
+.cat-card[aria-pressed="true"]{box-shadow:inset 0 0 0 2px var(--c);background:color-mix(in srgb,var(--c) 5%,#fff)}
+.filtered .cat-card[aria-pressed="false"]{opacity:.6}
+.cat-top{display:flex;align-items:center;gap:8px;font-size:13px}
+.cat-top strong{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cat-top .pct{font-size:12px;color:#8396a0}
+.cat-card>.money{font-size:20px;font-weight:750;letter-spacing:-.02em;align-self:flex-start}
+.cat-card>.money.credit{font-size:16px}
+.cat-card small{font-size:12px;color:#8396a0}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--c);flex:none}
+.micro{position:relative;height:4px;border-radius:999px;background:color-mix(in srgb,var(--c) 14%,transparent)}
+.micro-fill{position:absolute;inset:0 auto 0 0;border-radius:inherit;background:var(--c)}
+.micro-avg{position:absolute;top:-3px;width:2px;height:10px;margin-left:-1px;border-radius:1px;background:#142b37;opacity:.55}
+.link-button{border:0;background:none;padding:0;font:inherit;font-size:13px;font-weight:600;color:#1f7f69;cursor:pointer}
+.link-button:hover{text-decoration:underline}
+.cat-tag{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;font-size:13px;color:var(--c);background:color-mix(in srgb,var(--c) 10%,transparent)}
+
+/* Transaction drawer */
+.drawer{margin:0 0 0 auto;height:100%;max-height:none;width:min(420px,100%);border:0;padding:0;background:#fff;color:inherit;box-shadow:inset 1px 0 0 var(--hairline)}
+.drawer::backdrop{background:rgba(16,44,56,.35);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
+.drawer[open]{animation:drawer-in .28s var(--ease)}
+@keyframes drawer-in{from{transform:translateX(24px);opacity:0}}
+.drawer-body{padding:28px}
+.drawer-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.drawer-head h2{margin:8px 0 0;font-size:22px}
+.drawer-amount{margin:22px 0;font-size:34px;font-weight:800;letter-spacing:-.03em}
+.details{margin:0;display:grid;gap:0}
+.details>div{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:14px 0;border-top:1px solid #edf2f3}
+.details dt{font-size:12px;font-weight:700;letter-spacing:.06em;color:#62808d}
+.details dd{margin:0;font-size:14px;text-align:right}
+
+@media(max-width:750px){
+  :root{--sticky-top:58px}
+  .nav{height:58px}
+  .balance .money.hero{font-size:40px}
+  .drawer{width:100%;height:auto;margin:auto 0 0;border-radius:18px 18px 0 0}
+  @keyframes drawer-in{from{transform:translateY(24px);opacity:0}}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{transition-duration:0s!important;animation-duration:0s!important}
+  .tx-row:active,.cat-card:active,.icon-button:active{transform:none}
+}

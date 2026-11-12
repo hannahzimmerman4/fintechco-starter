@@ -43,6 +43,7 @@ function bindTransactionFilters(root: HTMLElement): void {
 function render(): void {
   const route = parseRoute(location.hash);
   app!.innerHTML = renderShell(route.name, renderView(route)).value;
+  app!.querySelector<HTMLElement>('.navitem.active')?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
   if (route.name === 'transactions') bindTransactionFilters(app!);
 }
 

@@ -40,7 +40,17 @@ describe('renderInsights', () => {
   it('shows an empty state when the month has no transactions', () => {
     const out = renderInsights([]).value;
     expect(out).toContain('No transactions in October 2026.');
-    expect(out).not.toContain('Total net spend');
+    expect(out).not.toContain('TOTAL NET SPEND');
+    expect(out).not.toContain('class="stat"');
+  });
+  it('shows the monthly total in its own stat block', () => {
+    const out = renderInsights(transactions).value;
+    expect(out).toContain('<div class="eyebrow">TOTAL NET SPEND</div><div class="balance">$2,339.48</div>');
+  });
+  it('shows a category that nets to a refund as a credit', () => {
+    const out = renderInsights([{ id: 'r1', accountId: 'cc', date: '2026-10-05', merchant: 'M', category: 'Books', amount: -12 }]).value;
+    expect(out).toContain('<b class="credit">+$12.00</b>');
+    expect(out).toContain('Net refund');
   });
 });
 

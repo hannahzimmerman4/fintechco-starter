@@ -12,6 +12,9 @@ export function renderInsights(txs: readonly Transaction[]): SafeHtml {
   if (count === 0) {
     return html`${header}<section class="activity"><p class="empty">No transactions in October 2026.</p></section>`;
   }
-  const rows = categories.map(c => html`<div class="tx"><div><strong>${c.category}</strong></div><b>${formatUsd(c.netCents / 100)}</b></div>`);
-  return html`${header}<section class="activity"><div class="rows">${rows}<div class="tx"><div><strong>Total net spend</strong></div><b>${formatUsd(totalCents / 100)}</b></div></div></section>`;
+  const rows = categories.map(c => c.netCents < 0
+    ? html`<div class="tx"><div><strong>${c.category}</strong><small>Net refund</small></div><b class="credit">+${formatUsd(-c.netCents / 100)}</b></div>`
+    : html`<div class="tx"><div><strong>${c.category}</strong></div><b>${formatUsd(c.netCents / 100)}</b></div>`);
+  const total = html`<section class="stat"><div><div class="eyebrow">TOTAL NET SPEND</div><div class="balance">${formatUsd(totalCents / 100)}</div><p>${pluralize(count, 'transaction')} in October 2026.</p></div></section>`;
+  return html`${header}${total}<section class="activity" aria-label="Spending by category"><div class="rows">${rows}</div></section>`;
 }

@@ -16,5 +16,5 @@ export function renderShell(active: RouteName, content: SafeHtml): SafeHtml {
       : html`<a class="navitem" href="${routeHref(n.name)}">${n.label}</a>`,
   );
   return html`<div class="shell"><nav class="nav" aria-label="Main"><div class="logo">F<span>•</span></div>${links}<div class="foot">DEMO ACCOUNT<br/>Synthetic transactions only</div></nav>
-  <main>${content}</main></div>`;
+  <main>${content}</main></div><dialog class="drawer" id="tx-drawer" aria-labelledby="drawer-title"></dialog>`;
 }

@@ -1,6 +1,8 @@
 import './style.css';
 import { accounts } from './accounts';
+import { isoDay } from './format';
 import type { SafeHtml } from './html';
+import { bindCategoryFilter, bindDrawer, bindPrivacy, syncPrivacy } from './interactions';
 import { parseRoute, routeHref, type Route } from './router';
 import { transactions } from './transactions';
 import { renderAccounts } from './views/accounts';
@@ -12,16 +14,19 @@ import { renderTransactionResults, renderTransactions, resolveFilter } from './v
 const app = document.querySelector<HTMLDivElement>('#app');
 if (!app) throw new Error('App element missing');
 
+/** The viewer's calendar day, for Today / Yesterday headers. */
+const today = isoDay(new Date());
+
 function renderView(route: Route): SafeHtml {
   switch (route.name) {
     case 'accounts':
       return renderAccounts(accounts, transactions);
     case 'transactions':
-      return renderTransactions(accounts, transactions, resolveFilter(route.params.get('q'), route.params.get('account'), accounts));
+      return renderTransactions(accounts, transactions, resolveFilter(route.params.get('q'), route.params.get('account'), accounts), today);
     case 'insights':
-      return renderInsights(transactions);
+      return renderInsights(accounts, transactions, today);
     case 'overview':
-      return renderOverview(accounts, transactions);
+      return renderOverview(accounts, transactions, today);
   }
 }
 
@@ -33,7 +38,7 @@ function bindTransactionFilters(root: HTMLElement): void {
   const update = () => {
     const data = new FormData(form);
     const filter = resolveFilter(String(data.get('q') ?? ''), String(data.get('account') ?? ''), accounts);
-    results.innerHTML = renderTransactionResults(accounts, transactions, filter).value;
+    results.innerHTML = renderTransactionResults(accounts, transactions, filter, today).value;
     history.replaceState(null, '', routeHref('transactions', { q: filter.query, account: filter.accountId }));
   };
   form.addEventListener('input', update);
@@ -44,8 +49,12 @@ function render(): void {
   const route = parseRoute(location.hash);
   app!.innerHTML = renderShell(route.name, renderView(route)).value;
   app!.querySelector<HTMLElement>('.navitem.active')?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+  syncPrivacy(app!);
   if (route.name === 'transactions') bindTransactionFilters(app!);
+  if (route.name === 'insights') bindCategoryFilter(app!);
 }
 
+bindPrivacy(app);
+bindDrawer(app, accounts, transactions);
 window.addEventListener('hashchange', render);
 render();

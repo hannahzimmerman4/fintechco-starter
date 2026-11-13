@@ -13,6 +13,15 @@ export const formatDate = (iso: string): string => shortDate.format(utcDate(iso)
 /** 'YYYY-MM' → 'Oct'. */
 export const formatMonth = (month: string): string => shortMonth.format(utcDate(`${month}-01`));
 
+const longMonth = new Intl.DateTimeFormat('en-US', { month: 'long', timeZone: 'UTC' });
+const longMonthYear = new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+
+/** 'YYYY-MM' → 'October'. Display only. */
+export const formatMonthName = (month: string): string => longMonth.format(utcDate(`${month}-01`));
+
+/** 'YYYY-MM' → 'October 2026'. Display only. */
+export const formatMonthYear = (month: string): string => longMonthYear.format(utcDate(`${month}-01`));
+
 export const pluralize = (n: number, noun: string): string => `${n} ${noun}${n === 1 ? '' : 's'}`;
 
 /** A local Date → 'YYYY-MM-DD' for the viewer's calendar day. */

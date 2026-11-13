@@ -179,3 +179,64 @@ describe('renderInsights polish', () => {
     expect(unsafe).toContain('data-category="&quot;&gt;&lt;i&gt;"');
   });
 });
+
+describe('renderInsights month selection', () => {
+  const october = renderInsights(accounts, transactions, TODAY).value;
+  const september = renderInsights(accounts, transactions, TODAY, '2026-09').value;
+  const notice = "That month isn't available. Showing October 2026.";
+
+  it('renders the same page with no month as with ?month=2026-10', () => {
+    expect(renderInsights(accounts, transactions, TODAY, '2026-10').value).toBe(october);
+    expect(october).toContain('$2,339.48');
+    expect(october).toContain('13 transactions');
+    expect(october).not.toContain(notice);
+  });
+  it('lists every month with data, oldest first, and marks the current one', () => {
+    const links = [...october.matchAll(/<a class="month-link[^"]*" href="([^"]+)"/g)].map(m => m[1]);
+    expect(links).toEqual(['#/insights?month=2026-08', '#/insights?month=2026-09', '#/insights', '#/insights?month=2026-11']);
+    expect(october.match(/aria-current="page"/g)).toHaveLength(1);
+    expect(october).toContain('<a class="month-link active" href="#/insights" aria-current="page">October 2026</a>');
+    expect(september).toContain('<a class="month-link active" href="#/insights?month=2026-09" aria-current="page">September 2026</a>');
+  });
+  it('makes the whole page follow a valid month', () => {
+    expect(september).toContain('Net spend by category for September 2026.');
+    expect(september).toContain('in September 2026.</p>');
+    expect(september).toContain('<h2>September transactions</h2>');
+    expect(september).toContain('Jul–Aug avg');
+    expect(september.replace(/<nav class="month-selector".*?<\/nav>/, '')).not.toContain('October');
+    expect(september).not.toContain(notice);
+  });
+  it('splits the Sep 30 / Oct 1 boundary', () => {
+    expect(september).toContain('data-tx="tx-30"');
+    expect(september).not.toContain('data-tx="tx-31"');
+    expect(october).toContain('data-tx="tx-31"');
+    expect(october).not.toContain('data-tx="tx-30"');
+  });
+  it('renders the earliest month, which has no history', () => {
+    const august = renderInsights(accounts, transactions, TODAY, '2026-08').value;
+    expect(august).toContain('<h2>August transactions</h2>');
+    expect(august).toContain('No net spend in Jun–Jul');
+  });
+  it.each(['', 'abc', '2026-13', '2026-00', '2026-1', '2026-10-01', ' 2026-09', '2025-01'])(
+    'shows October with a visible notice for unsupported month %j',
+    raw => {
+      const out = renderInsights(accounts, transactions, TODAY, raw).value;
+      expect(out).toContain(notice);
+      expect(out).toContain('$2,339.48');
+      expect(out).toContain('<h2>October transactions</h2>');
+      expect(out).toContain('aria-current="page">October 2026</a>');
+    },
+  );
+  it('never echoes a hostile month value', () => {
+    const out = renderInsights(accounts, transactions, TODAY, '<img src=x onerror=alert(1)>').value;
+    expect(out).toContain(notice);
+    expect(out).not.toContain('<img');
+    expect(out).not.toContain('onerror');
+  });
+  it('keeps the empty state when there are no transactions at all', () => {
+    const out = renderInsights(accounts, [], TODAY, '2026-09').value;
+    expect(out).toContain('No transactions in October 2026.');
+    expect(out).toContain(notice);
+    expect(out).not.toContain('month-selector');
+  });
+});

@@ -24,7 +24,7 @@ function renderView(route: Route): SafeHtml {
     case 'transactions':
       return renderTransactions(accounts, transactions, resolveFilter(route.params.get('q'), route.params.get('account'), accounts), today);
     case 'insights':
-      return renderInsights(accounts, transactions, today);
+      return renderInsights(accounts, transactions, today, route.params.get('month'));
     case 'overview':
       return renderOverview(accounts, transactions, today);
   }

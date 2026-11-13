@@ -90,3 +90,4 @@ span.navitem{display:block}a.navitem{display:block;color:inherit;text-decoration
   .tx-row:active,.cat-card:active,.icon-button:active{transform:none}
 }
 .build{opacity:.7;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px}
+.month-picker{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 4px}.month-link{border:1px solid #d8e4e7;border-radius:30px;padding:8px 14px;font-size:13px;color:#142b37;text-decoration:none;background:#fff}.month-link:hover{border-color:#cfe1e5;background:#f0f6f7}.month-link[aria-current="page"]{background:#102c38;border-color:#102c38;color:#fff;font-weight:600}.month-link:focus-visible{outline:2px solid #55d7ba;outline-offset:2px}.notice{background:#fff7e6;border:1px solid #f3d9a4;color:#7a5410;border-radius:12px;padding:12px 16px;margin:0 0 16px;font-size:14px}

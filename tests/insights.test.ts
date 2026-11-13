@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { categoryAverages, previousMonths, spendingInsights } from '../src/insights';
+import { availableMonths, categoryAverages, previousMonths, resolveMonth, spendingInsights } from '../src/insights';
 import { transactions } from '../src/transactions';
 import type { Transaction } from '../src/transactions';
 
@@ -81,6 +81,47 @@ describe('spendingInsights', () => {
       { category: 'Uncategorized', netCents: 1620 },
       { category: 'Subscriptions', netCents: 1599 },
     ]);
+  });
+});
+
+describe('availableMonths', () => {
+  it('lists each month with data once, oldest first', () => {
+    expect(availableMonths(transactions)).toEqual(['2026-08', '2026-09', '2026-10', '2026-11']);
+    expect(availableMonths([tx('2026-10-05', 1), tx('2025-12-31', 1), tx('2026-10-01', 1)])).toEqual(['2025-12', '2026-10']);
+    expect(availableMonths([])).toEqual([]);
+  });
+});
+
+describe('resolveMonth', () => {
+  const available = ['2026-08', '2026-09', '2026-10', '2026-11'];
+  it('uses the fallback without a notice when the param is omitted', () => {
+    expect(resolveMonth(null, available, '2026-10')).toEqual({ month: '2026-10', unavailable: false });
+  });
+  it('accepts a month that has data', () => {
+    expect(resolveMonth('2026-09', available, '2026-10')).toEqual({ month: '2026-09', unavailable: false });
+    expect(resolveMonth('2026-10', available, '2026-10')).toEqual({ month: '2026-10', unavailable: false });
+  });
+  it.each([
+    ['empty', ''],
+    ['not a month', 'abc'],
+    ['impossible month', '2026-13'],
+    ['month zero', '2026-00'],
+    ['partial value', '2026-1'],
+    ['trailing junk', '2026-10x'],
+    ['padded', ' 2026-09'],
+    ['full date', '2026-09-30'],
+    ['month with no transactions', '2026-07'],
+    ['hostile markup', '<img src=x onerror=alert(1)>'],
+  ])('falls back with a notice for %s', (_kind, raw) => {
+    expect(resolveMonth(raw, available, '2026-10')).toEqual({ month: '2026-10', unavailable: true });
+  });
+});
+
+describe('month boundary', () => {
+  const fixtures = [tx('2026-09-30', 30, 'A'), tx('2026-10-01', 1, 'A')];
+  it('puts Sep 30 in September and Oct 1 in October', () => {
+    expect(spendingInsights(fixtures, '2026-09')).toMatchObject({ count: 1, totalCents: 3000 });
+    expect(spendingInsights(fixtures, '2026-10')).toMatchObject({ count: 1, totalCents: 100 });
   });
 });
 

@@ -31,6 +31,35 @@ export function spendingInsights(txs: readonly Transaction[], month: string): Sp
   return { categories, totalCents, count };
 }
 
+/** A strict 'YYYY-MM' with a real month (01–12). */
+export const MONTH_PATTERN = /^\d{4}-(0[1-9]|1[0-2])$/;
+
+/** Every 'YYYY-MM' that has at least one transaction, oldest first (string order is chronological). */
+export function availableMonths(txs: readonly Transaction[]): string[] {
+  const months = new Set<string>();
+  for (const t of txs) {
+    const month = t.date.slice(0, 7);
+    if (MONTH_PATTERN.test(month)) months.add(month);
+  }
+  return [...months].sort();
+}
+
+export interface ResolvedMonth {
+  month: string;
+  /** True when a month was requested but can't be shown, so the view must say so. */
+  unavailable: boolean;
+}
+
+/**
+ * Turn an untrusted `month` URL value into a month to show. Omitted (null) → `fallback`.
+ * Anything not on the allowlist of `available` months (bad format, impossible month, partial value, empty month) → `fallback`, flagged.
+ */
+export function resolveMonth(raw: string | null, available: readonly string[], fallback: string): ResolvedMonth {
+  if (raw === null) return { month: fallback, unavailable: false };
+  if (MONTH_PATTERN.test(raw) && available.includes(raw)) return { month: raw, unavailable: false };
+  return { month: fallback, unavailable: true };
+}
+
 /** The `n` calendar months before a 'YYYY-MM' month, oldest first: ('2026-01', 2) → ['2025-11', '2025-12']. */
 export function previousMonths(month: string, n: number): string[] {
   const [y, m] = month.split('-').map(Number);

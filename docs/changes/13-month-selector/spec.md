@@ -21,6 +21,9 @@ Issue: #13. From: intent.md. Policies applied: CLAUDE.md security and money rule
 | 3 | Empty month: blank page vs. notice | UX: never blank or broken | Treat it as unsupported (notice + October) |
 | 4 | Sep 30 / Oct 1 boundary | Dates | Unit test on both sides |
 
+## Note for engineering
+The month reaches the page as `renderInsights(accounts, txs, today, month: string | null)`, with `month` taken from the route param. The independent acceptance test calls it this way.
+
 ## Out of scope
 Persisting the selection, comparing two months side by side, any change to `data/*.json`.
 

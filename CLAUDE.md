@@ -16,7 +16,9 @@ Security (enforced in layers; write it correctly the first time):
 - Never write secrets, tokens, or keys anywhere, including tests.
 - A `PreToolUse` hook (`scripts/guard-hook.mjs`) blocks these patterns at write time; CodeQL runs on every PR as the independent check. Neither replaces the other.
 
-Feature requests are GitHub issues; read them with `gh issue view <n>`. The issue is the system of record. Each change keeps its artifacts in `docs/changes/<n>-<slug>/`: `intent.md` and `spec.md` (from product, read before planning) and `plan.md` (the approved plan, committed on the feature branch before any code). When the work departs from `plan.md`, update it in the same commit. Reviews follow `REVIEW.md`. Never edit `data/*.json` (financial records). Preserve existing pages unless the issue says otherwise.
+Feature requests are GitHub issues; read them with `gh issue view <n>`. The issue is the system of record. Each change keeps its artifacts in `docs/changes/<n>-<slug>/`: `intent.md` and `spec.md` (from product, read before planning) and `plan.md` (the approved plan, committed on the feature branch before any code). When the work departs from `plan.md`, update it in the same commit. Reviews follow `REVIEW.md`.
+
+Telemetry: when the local receiver is running, Claude Code's OpenTelemetry events and metrics land in `.claude/telemetry/events.jsonl` and `metrics.jsonl` (tool use, permission decisions, cost, tokens and cache). When asked what you did or what it cost, summarize these files for the current session. Never print raw lines: they include account identifiers. Never edit `data/*.json` (financial records). Preserve existing pages unless the issue says otherwise.
 
 Skills:
 - Repo-specific skills live in `.claude/skills/<name>/SKILL.md` and are committed; don't duplicate them in `~/.claude/skills/`.

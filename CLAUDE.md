@@ -16,7 +16,7 @@ Security (enforced in layers; write it correctly the first time):
 - Never write secrets, tokens, or keys anywhere, including tests.
 - A `PreToolUse` hook (`scripts/guard-hook.mjs`) blocks these patterns at write time; CodeQL runs on every PR as the independent check. Neither replaces the other.
 
-Feature requests are GitHub issues; read them with `gh issue view <n>`. Never edit `data/*.json` (financial records). Preserve existing pages unless the issue says otherwise.
+Feature requests are GitHub issues; read them with `gh issue view <n>`. The issue is the system of record. Each change keeps its artifacts in `docs/changes/<n>-<slug>/`: `intent.md` and `spec.md` (from product, read before planning) and `plan.md` (the approved plan, committed on the feature branch before any code). When the work departs from `plan.md`, update it in the same commit. Reviews follow `REVIEW.md`. Never edit `data/*.json` (financial records). Preserve existing pages unless the issue says otherwise.
 
 Skills:
 - Repo-specific skills live in `.claude/skills/<name>/SKILL.md` and are committed; don't duplicate them in `~/.claude/skills/`.

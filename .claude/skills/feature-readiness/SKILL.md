@@ -7,7 +7,7 @@ Goal: show, with evidence, whether the change on this branch meets its acceptanc
 
 ## Steps
 
-1. **Criteria.** Find the issue number from the branch, the conversation, or by asking. Read it with `gh issue view <n>`. List every acceptance criterion and every rule in the issue.
+1. **Criteria.** Find the issue number from the branch, the conversation, or by asking. Read it with `gh issue view <n>`. List every acceptance criterion and every rule in the issue. If `docs/changes/<n>-*/` exists, also read `spec.md` (flagged concerns count as criteria) and `plan.md`, and note any change in the diff that isn't in the plan.
 2. **Diff.** Run `git status --short` and `git diff main...HEAD` (and `git diff` for uncommitted work). Summarize what changed, file by file.
 3. **Checks.** Run `npm run check`, which covers lint, skill lint, tests, type-check and build. Don't invent other commands. If a command is denied or fails, report that with its actual output. Never paraphrase a result you didn't see.
 4. **Domain review.** Check the diff against these FinTechCo rules:
@@ -26,7 +26,7 @@ Goal: show, with evidence, whether the change on this branch meets its acceptanc
    |---|---|---|
 
 6. **Findings.** List the domain-review findings by severity, with `file:line`, plus tests that are missing.
-7. **PR description.** Draft it with these sections: Problem, Behavior, Validation (the evidence table), Risk, Rollback (revert the PR, which redeploys the previous build), and `Closes #<n>`.
+7. **PR description.** Draft it with these sections: Problem, Behavior, Validation (the evidence table), Risk, Rollback (revert the PR, which redeploys the previous build), Trace (links to `intent.md`, `spec.md` and `plan.md` in `docs/changes/<n>-*/`), and `Closes #<n>`.
 
 ## Boundaries
 

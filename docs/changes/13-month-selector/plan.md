@@ -17,10 +17,10 @@ Insights is hardcoded to October 2026 (`INSIGHTS_MONTH` in `src/views/insights.t
   - Matches pattern **and** is in `available` → `{ raw, false }`.
   - Everything else (`''`, `2026-13`, `2026-1`, `2026-10x`, `2026-07`, hostile strings) → `{ fallback, true }`.
 
-**`src/format.ts`**: add `formatMonthYear('2026-10') → 'October 2026'` (UTC `Intl`, same approach as `formatMonth`; display only).
+**`src/format.ts`**: add `formatMonthYear('2026-10') → 'October 2026'` and `formatMonthName('2026-10') → 'October'` (UTC `Intl`, same approach as `formatMonth`; display only).
 
 **`src/views/insights.ts`**
-- Keep `INSIGHTS_MONTH = '2026-10'` as the default. `renderInsights(accounts, txs, today, requestedMonth: string | null = null)` resolves the month, then replaces every `INSIGHTS_MONTH` / "October" reference with the resolved month (`formatMonthYear`, short `formatMonth` for "Sep transactions"). History becomes `previousMonths(month, HISTORY_MONTHS)`.
+- Keep `INSIGHTS_MONTH = '2026-10'` as the default. `renderInsights(accounts, txs, today, requestedMonth: string | null = null)` resolves the month, then replaces every `INSIGHTS_MONTH` / "October" reference with the resolved month (`formatMonthYear`; `formatMonthName` for the "September transactions" heading, so the default stays "October transactions". Deviation: the draft plan said short `formatMonth`, which broke the existing heading test). History becomes `previousMonths(month, HISTORY_MONTHS)`.
 - Month selector: a `<nav aria-label="Choose month">` with one link per available month (oldest first) via `routeHref('insights', { month: m === INSIGHTS_MONTH ? undefined : m })`, so October links to the bare `#/insights` (clears the selection). The current month gets `aria-current="page"`. Plain links: no JS, works through the existing `hashchange` → `render()`.
 - Notice when `unavailable`: `<p class="notice" role="status">That month isn't available. Showing October 2026.</p>`. It doesn't echo the raw value, so nothing attacker-controlled reaches markup.
 - Empty-state behavior unchanged when no param and October has no data.
@@ -38,7 +38,7 @@ Not touched: `src/router.ts` (already exposes `params`), other views, `data/*.js
 - `tests/format.test.ts`: `formatMonthYear`.
 - `tests/views.test.ts`:
   - `renderInsights(..., null)` is identical to `renderInsights(..., '2026-10')` and still shows `$2,339.48` and 13 transactions.
-  - `'2026-09'` shows the September total/count, "September 2026", "Jul–Aug avg", and no October rows.
+  - `'2026-09'` shows the September total/count, "September 2026", "September transactions", "Jul–Aug avg", and no October rows.
   - Each unsupported kind shows the notice + October figures.
   - A hostile value isn't present raw.
   - The selector lists 4 months oldest first, and only the current one has `aria-current`. The October link is `#/insights`.

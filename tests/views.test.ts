@@ -61,6 +61,55 @@ describe('renderInsights', () => {
   });
 });
 
+describe('renderInsights month selection', () => {
+  const octoberIds = transactions.filter(t => t.date.startsWith('2026-10')).map(t => t.id);
+  const notice = "That month isn't available. Showing October 2026.";
+
+  it('renders the same page with no month as with ?month=2026-10', () => {
+    const omitted = renderInsights(accounts, transactions, TODAY).value;
+    expect(renderInsights(accounts, transactions, TODAY, null).value).toBe(omitted);
+    expect(renderInsights(accounts, transactions, TODAY, '2026-10').value).toBe(omitted);
+    expect(omitted).toContain('$2,339.48');
+    expect(omitted).toContain('13 transactions in October 2026.');
+    expect(omitted).not.toContain(notice);
+  });
+
+  it('follows a valid month across the whole page', () => {
+    const out = renderInsights(accounts, transactions, TODAY, '2026-09').value;
+    expect(out).toContain('Net spend by category for September 2026.');
+    expect(out).toContain('<span class="money">$2,507.11</span>');
+    expect(out).toContain('11 transactions in September 2026.');
+    expect(out).toContain('<h2>September transactions</h2>');
+    expect(out).toContain('Jul–Aug avg');
+    expect(out).not.toContain('for October 2026');
+    expect(out).not.toContain('in October 2026');
+    expect(out).not.toContain(notice);
+    for (const id of octoberIds) expect(out).not.toContain(`data-tx="${id}"`);
+  });
+
+  it.each(['', 'abc', '2026-13', '2026-1', '2026-07'])('shows October with a notice for %j', raw => {
+    const out = renderInsights(accounts, transactions, TODAY, raw).value;
+    expect(out).toContain(notice);
+    expect(out).toContain('role="status"');
+    expect(out).toContain('<span class="money">$2,339.48</span>');
+  });
+
+  it('never echoes a hostile month value', () => {
+    const out = renderInsights(accounts, transactions, TODAY, '<img src=x onerror=alert(1)>').value;
+    expect(out).toContain(notice);
+    expect(out).not.toContain('<img');
+    expect(out).not.toContain('onerror');
+  });
+
+  it('lists every month with data oldest first and marks only the current one', () => {
+    const out = renderInsights(accounts, transactions, TODAY, '2026-09').value;
+    const links = [...out.matchAll(/<a class="month-link" href="([^"]+)"( aria-current="page")?>([^<]+)<\/a>/g)];
+    expect(links.map(l => l[3])).toEqual(['August 2026', 'September 2026', 'October 2026', 'November 2026']);
+    expect(links.map(l => l[1])).toEqual(['#/insights?month=2026-08', '#/insights?month=2026-09', '#/insights', '#/insights?month=2026-11']);
+    expect(links.filter(l => l[2]).map(l => l[3])).toEqual(['September 2026']);
+  });
+});
+
 describe('renderOverview', () => {
   const out = renderOverview(accounts, transactions, TODAY).value;
   it('shows calculated balances rather than a hard-coded figure', () => {

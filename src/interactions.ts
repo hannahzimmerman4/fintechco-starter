@@ -40,7 +40,7 @@ export function bindPrivacy(root: HTMLElement): void {
   });
 }
 
-/** Insights: a category card filters the October list and highlights its bar segment; tapping it again clears. */
+/** Insights: a category card filters the selected month's list and highlights its bar segment; tapping it again clears. */
 export function bindCategoryFilter(root: HTMLElement): void {
   const cats = root.querySelector<HTMLElement>('#spend-categories');
   const list = root.querySelector<HTMLElement>('#spend-transactions');
